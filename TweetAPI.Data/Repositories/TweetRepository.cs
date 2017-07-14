@@ -23,5 +23,11 @@ namespace TweetAPI.Data.Repositories
             var filter = Builders<Tweet>.Filter.GeoWithinCenterSphere(t => t.Position, x, y, radius);
             return _entities.GetCollection<Tweet>(_entityName).Find(filter).ToList();
         }
+
+        public IEnumerable<Tweet> GetTweetsWithinPolygon(double [,] points)
+        {
+            var filter = Builders<Tweet>.Filter.GeoWithinPolygon(t => t.Position, points);
+            return _entities.GetCollection<Tweet>(_entityName).Find(filter).ToList();
+        }
     }
 }

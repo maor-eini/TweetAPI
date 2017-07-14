@@ -15,6 +15,6 @@ namespace TweetAPI.Domain.Entities
         public DateTime CreatedOn { get; set; }
 
         [BsonElement]
-        public DateTime LastModifiedOn { get; set; }
+        public DateTime LastModified { get; set; }
     }
 }

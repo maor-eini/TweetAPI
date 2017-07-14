@@ -9,5 +9,7 @@ namespace TweetAPI.Data.Repositories.Interfaces
     public interface ITweetRepository
     {
         IEnumerable<Tweet> GetTweetsWithinCenterSphere(double x, double y, double radius);
+
+        IEnumerable<Tweet> GetTweetsWithinPolygon(double[,] points);
     }
 }
