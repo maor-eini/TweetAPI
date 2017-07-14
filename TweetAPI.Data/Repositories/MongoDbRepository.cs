@@ -8,15 +8,15 @@ using TweetAPI.Domain.Entities;
 
 namespace TweetAPI.Data.Repositories
 {
-    public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
+    public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : RootEntity
     {
         protected readonly IMongoDatabase _entities;
         protected string _entityName { get; set; }
 
-        public MongoDbRepository(string connectionString, string database, string entityName)
+        public MongoDbRepository(string connectionString, string collectionName, string entityName)
         {
             var mongoClient = new MongoClient(connectionString);
-            _entities = mongoClient.GetDatabase(database);
+            _entities = mongoClient.GetDatabase(collectionName);
             _entityName = entityName;
         }
 

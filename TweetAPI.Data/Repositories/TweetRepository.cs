@@ -11,12 +11,9 @@ namespace TweetAPI.Data.Repositories
     public class TweetRepository : MongoDbRepository<Tweet>, ITweetRepository
     {
 
-        public TweetRepository(string connectionString):
-            base(connectionString,"TweetDB", "Tweet")
-        {
-            //var client = new MongoClient("mongodb://localhost:27017");
-            //_entities = mongoClient.GetDatabase("TweetDB");
-        }
+        public TweetRepository(string connectionString, string collectionName, string entityName) :
+            base(connectionString, collectionName, entityName)
+        { }
 
         public IEnumerable<Tweet> GetTweetsWithinCenterSphere(double x, double y, double radius)
         {

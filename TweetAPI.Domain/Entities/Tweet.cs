@@ -7,7 +7,7 @@ using System.Text;
 
 namespace TweetAPI.Domain.Entities
 {
-    public class Tweet : BaseEntity
+    public class Tweet : RootEntity
     {
         [BsonElement("Content")]
         public string Content { get; set; }

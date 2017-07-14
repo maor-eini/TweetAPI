@@ -6,8 +6,9 @@ using System.Text;
 
 namespace TweetAPI.Domain.Entities
 {
-    public class BaseEntity
+    public class RootEntity
     {
+        [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 

@@ -6,7 +6,7 @@ using TweetAPI.Domain.Entities;
 
 namespace TweetAPI.Data.Repositories.Interfaces
 {
-    public interface IRepository<TEntity> where TEntity : BaseEntity
+    public interface IRepository<TEntity> where TEntity : RootEntity
     {
         TEntity Get(string id);
         IEnumerable<TEntity> GetAll();
