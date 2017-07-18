@@ -6,7 +6,7 @@ using TweetAPI.Domain.Entities;
 
 namespace TweetAPI.Data.Repositories.Interfaces
 {
-    public interface ITweetRepository
+    public interface ITweetRepository : IRepository<Tweet>
     {
         IEnumerable<Tweet> GetTweetsWithinCenterSphere(double x, double y, double radius);
 
