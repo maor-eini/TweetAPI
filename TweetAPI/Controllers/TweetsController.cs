@@ -24,6 +24,20 @@ namespace TweetAPI.Controllers
            return _tweetRepository.GetAll();
         }
 
+        // GET api/tweet
+        [HttpGet]
+        public IEnumerable<Tweet> Get([FromBody]double x, double y, double radius)
+        {
+            return _tweetRepository.GetTweetsWithinCenterSphere(x, y, radius);
+        }
+
+        // GET api/tweet
+        [HttpGet]
+        public IEnumerable<Tweet> Get([FromBody]double[,] points)
+        {
+            return _tweetRepository.GetTweetsWithinPolygon(points);
+        }
+
         // GET api/tweet/5
         [HttpGet("{id}")]
         public Tweet Get(string id)
@@ -51,5 +65,7 @@ namespace TweetAPI.Controllers
         {
             _tweetRepository.Remove(id);
         }
+
+        
     }
 }
