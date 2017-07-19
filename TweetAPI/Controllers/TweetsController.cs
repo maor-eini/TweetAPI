@@ -19,53 +19,103 @@ namespace TweetAPI.Controllers
         }
         // GET api/tweet
         [HttpGet]
-        public IEnumerable<Tweet> Get()
+        public IActionResult Get()
         {
-           return _tweetRepository.GetAll();
-        }
+            var tweets = _tweetRepository.GetAll();
 
-        // GET api/tweet
-        [HttpGet]
-        public IEnumerable<Tweet> Get([FromBody]double x, double y, double radius)
-        {
-            return _tweetRepository.GetTweetsWithinCenterSphere(x, y, radius);
-        }
+            if (tweets == null)
+            {
+                return NotFound();
+            }
 
-        // GET api/tweet
-        [HttpGet]
-        public IEnumerable<Tweet> Get([FromBody]double[,] points)
-        {
-            return _tweetRepository.GetTweetsWithinPolygon(points);
+            return Ok(tweets);
         }
 
         // GET api/tweet/5
         [HttpGet("{id}")]
-        public Tweet Get(string id)
+        public IActionResult Get(string id)
         {
-            return _tweetRepository.Get(id);
+            if (String.IsNullOrEmpty(id)) return BadRequest();
+
+            var tweet = _tweetRepository.Get(id);
+
+            if (tweet == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tweet);     
         }
 
         // POST api/tweet
         [HttpPost]
-        public void Post([FromBody]Tweet tweet)
+        public IActionResult Post([FromBody]Tweet tweet)
         {
+            if (tweet == null)
+            {
+                BadRequest();
+            }
+
             _tweetRepository.Add(tweet);
+
+            return CreatedAtRoute("Get", new { id = tweet.Id }, tweet);
         }
 
         // PUT api/tweet/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)
         {
-            
+
         }
 
         // DELETE api/tweet/5
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public IActionResult Delete(string id)
         {
+            if (String.IsNullOrEmpty(id)) return BadRequest();
+
             _tweetRepository.Remove(id);
+
+            return Ok();
         }
 
-        
+        // GET api/tweet?x={double}&y={double}&radius={double}
+        [HttpGet]
+        public IActionResult GetTweetsWithinCenterSphere(double x, double y, double radius)
+        {
+            if (radius <= 0) return BadRequest();
+
+            var tweets = _tweetRepository.GetTweetsWithinCenterSphere(x, y, radius);
+
+            if (tweets == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tweets);  
+        }
+
+        // POST api/tweet
+        [HttpPost]
+        public IActionResult GetTweetsWithinPolygon([FromBody]double[,] points)
+        {
+            if (points == null || points.Length < 3 ) return BadRequest();
+
+            //Validate that the first and last elements are equals
+            if (points[0, 0] != points[points.Length-1, 0] && 
+                points[0, 1] != points[points.Length - 1, 1])
+            {
+                return BadRequest();
+            }
+
+            var tweets = _tweetRepository.GetTweetsWithinPolygon(points);
+
+            if (tweets == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tweets);
+        }
     }
 }
