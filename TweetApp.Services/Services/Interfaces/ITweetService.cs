@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TweetApp.Domain.Entities;
 
 namespace TweetApp.Services.Services.Interfaces
 {
     public interface ITweetService
     {
-        Tweet Get(string id);
-        IEnumerable<Tweet> GetRecentlyAddedTweets();
-        IEnumerable<Tweet> GetTweetsWithinCenterSphere(double x, double y, double radius);
-        IEnumerable<Tweet> GetTweetsWithinPolygon(double[,] points);
-        void Add(Tweet tweet);
-        void Remove(string id);
+        Task<Tweet> Get(string id);
+        Task<IEnumerable<Tweet>> GetRecentlyAddedTweets();
+        Task<IEnumerable<Tweet>> GetTweetsWithinCenterSphere(double x, double y, double radius);
+        Task<IEnumerable<Tweet>> GetTweetsWithinPolygon(double[,] points);
+        Task Add(Tweet tweet);
+        Task Remove(string id);
 
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 using TweetApp.Data.Repositories.Interfaces;
 using TweetApp.Domain.Entities;
 
@@ -20,44 +21,44 @@ namespace TweetApp.Data.Repositories.MongoDB
             _entityName = entityName;
         }
 
-        public TEntity Get(string id)
+        public async Task<TEntity> Get(string id)
         {
             var filter = Builders<TEntity>.Filter.Eq(entity => entity.Id, id);
-            return _entities.GetCollection<TEntity>(_entityName).Find(filter).FirstOrDefault();
+            return await _entities.GetCollection<TEntity>(_entityName).Find(filter).FirstOrDefaultAsync();
         }
 
-        public IEnumerable<TEntity> Get()
+        public async Task<IEnumerable<TEntity>> Get()
         {
-            return _entities.GetCollection<TEntity>(_entityName).Find(t=>t.Active == true).SortByDescending(t=>t.CreatedOn).Limit(100).ToList();
+            return await _entities.GetCollection<TEntity>(_entityName).Find(t=>t.Active == true).SortByDescending(t=>t.CreatedOn).Limit(100).ToListAsync();
         }
 
-        public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> Find(Expression<Func<TEntity, bool>> predicate)
         {
-            return _entities.GetCollection<TEntity>(_entityName).Find(predicate).ToList();
+            return await _entities.GetCollection<TEntity>(_entityName).Find(predicate).ToListAsync();
         }
 
-        public void Add(TEntity entity)
+        public async Task Add(TEntity entity)
         {
-            _entities.GetCollection<TEntity>(_entityName).InsertOne(entity);
+            await _entities.GetCollection<TEntity>(_entityName).InsertOneAsync(entity);
         }
 
-        public void AddRange(IEnumerable<TEntity> entities)
+        public async Task AddRange(IEnumerable<TEntity> entities)
         {
-            _entities.GetCollection<TEntity>(_entityName).InsertMany(entities);
+            await _entities.GetCollection<TEntity>(_entityName).InsertManyAsync(entities);
         }
 
-        public void Remove(string id)
+        public async Task Remove(string id)
         {
             var filter = Builders<TEntity>.Filter.Eq(entity => entity.Id, id);
             var update = Builders<TEntity>.Update.Set(x => x.Active, false);
 
-            _entities.GetCollection<TEntity>(_entityName).UpdateOne(filter, update);
+            await _entities.GetCollection<TEntity>(_entityName).UpdateOneAsync(filter, update);
             //_entities.GetCollection<TEntity>(_entityName).DeleteOne(filter);
         }
 
-        public void RemoveRange(Expression<Func<TEntity, bool>> predicate)
+        public async Task RemoveRange(Expression<Func<TEntity, bool>> predicate)
         {
-            _entities.GetCollection<TEntity>(_entityName).DeleteMany(predicate);
+            await _entities.GetCollection<TEntity>(_entityName).DeleteManyAsync(predicate);
         }
     }
 }

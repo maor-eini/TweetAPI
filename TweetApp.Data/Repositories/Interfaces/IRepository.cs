@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 using TweetApp.Domain.Entities;
 
 namespace TweetApp.Data.Repositories.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : RootEntity
     {
-        TEntity Get(string id);
-        IEnumerable<TEntity> Get();
-        IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity> Get(string id);
+        Task<IEnumerable<TEntity>> Get();
+        Task<IEnumerable<TEntity>> Find(Expression<Func<TEntity, bool>> predicate);
 
-        void Add(TEntity entity);
-        void AddRange(IEnumerable<TEntity> entities);
+        Task Add(TEntity entity);
+        Task AddRange(IEnumerable<TEntity> entities);
 
-        void Remove(string id);
-        void RemoveRange(Expression<Func<TEntity, bool>> predicate);
+        Task Remove(string id);
+        Task RemoveRange(Expression<Func<TEntity, bool>> predicate);
     }
 }

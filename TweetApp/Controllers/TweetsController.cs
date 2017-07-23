@@ -20,9 +20,9 @@ namespace TweetApp.Controllers
         }
         // GET api/tweet
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var tweets = _tweetService.GetRecentlyAddedTweets();
+            var tweets = await _tweetService.GetRecentlyAddedTweets();
 
             if (tweets == null)
             {
@@ -34,11 +34,11 @@ namespace TweetApp.Controllers
 
         // GET api/tweet/5
         [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
             if (String.IsNullOrEmpty(id)) return BadRequest();
 
-            var tweet = _tweetService.Get(id);
+            var tweet = await _tweetService.Get(id);
 
             if (tweet == null)
             {
@@ -50,14 +50,14 @@ namespace TweetApp.Controllers
 
         // POST api/tweet
         [HttpPost]
-        public IActionResult Post([FromBody]Tweet tweet)
+        public async Task<IActionResult> Post([FromBody]Tweet tweet)
         {
             if (tweet == null)
             {
                 BadRequest();
             }
 
-            _tweetService.Add(tweet);
+            await _tweetService.Add(tweet);
 
             return CreatedAtRoute("Get", new { id = tweet.Id }, tweet);
         }
@@ -71,22 +71,22 @@ namespace TweetApp.Controllers
 
         // DELETE api/tweet/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             if (String.IsNullOrEmpty(id)) return BadRequest();
 
-            _tweetService.Remove(id);
+            await _tweetService.Remove(id);
 
             return Ok();
         }
 
         // GET api/tweet?x={double}&y={double}&radius={double}
         [HttpGet("WithinCenterSphere")]
-        public IActionResult GetTweetsWithinCenterSphere([FromQuery]double x, [FromQuery]double y, [FromQuery]double radius)
+        public async Task<IActionResult> GetTweetsWithinCenterSphere([FromQuery]double x, [FromQuery]double y, [FromQuery]double radius)
         {
             if (radius <= 0) return BadRequest();
 
-            var tweets = _tweetService.GetTweetsWithinCenterSphere(x, y, radius);
+            var tweets = await _tweetService.GetTweetsWithinCenterSphere(x, y, radius);
 
             if (tweets == null)
             {
@@ -98,7 +98,7 @@ namespace TweetApp.Controllers
 
         // POST api/tweet
         [HttpPost("WithinPolygon")]
-        public IActionResult GetTweetsWithinPolygon([FromBody]double[,] points)
+        public async Task<IActionResult> GetTweetsWithinPolygon([FromBody]double[,] points)
         {
             if (points == null || points.Length < 3 ) return BadRequest();
 
@@ -109,7 +109,7 @@ namespace TweetApp.Controllers
                 return BadRequest();
             }
 
-            var tweets = _tweetService.GetTweetsWithinPolygon(points);
+            var tweets = await _tweetService.GetTweetsWithinPolygon(points);
 
             if (tweets == null)
             {

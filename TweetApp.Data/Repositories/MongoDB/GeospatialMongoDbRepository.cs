@@ -5,6 +5,7 @@ using System.Text;
 using TweetApp.Data.Repositories.Interfaces;
 using TweetApp.Domain.Entities;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace TweetApp.Data.Repositories.MongoDB
 {
@@ -15,32 +16,32 @@ namespace TweetApp.Data.Repositories.MongoDB
         {
         }
 
-        public IEnumerable<TEntity> FindWithinCenterSphere(double x, double y, double radius)
+        public async Task<IEnumerable<TEntity>> FindWithinCenterSphere(double x, double y, double radius)
         {
             var filter = Builders<TEntity>.Filter.GeoWithinCenterSphere(t => t.Position, x, y, radius);
-            return _entities.GetCollection<TEntity>(_entityName).Find(filter).ToList();
+            return await _entities.GetCollection<TEntity>(_entityName).Find(filter).ToListAsync();
         }
 
-        public IEnumerable<TEntity> FindWithinCenterSphere(double x, double y, double radius, Expression<Func<TEntity, bool>> filter)
+        public async Task<IEnumerable<TEntity>> FindWithinCenterSphere(double x, double y, double radius, Expression<Func<TEntity, bool>> filter)
         {
             var builder = Builders<TEntity>.Filter;
             var filters = builder.And(builder.Where(filter), builder.GeoWithinCenterSphere(t => t.Position, x, y, radius));
 
-            return _entities.GetCollection<TEntity>(_entityName).Find(filters).ToList();
+            return await _entities.GetCollection<TEntity>(_entityName).Find(filters).ToListAsync();
         }
 
-        public IEnumerable<TEntity> FindWithinPolygon(double[,] points)
+        public async Task<IEnumerable<TEntity>> FindWithinPolygon(double[,] points)
         {
             var filter = Builders<TEntity>.Filter.GeoWithinPolygon(t => t.Position, points);
-            return _entities.GetCollection<TEntity>(_entityName).Find(filter).ToList();
+            return await _entities.GetCollection<TEntity>(_entityName).Find(filter).ToListAsync();
         }
 
-        public IEnumerable<TEntity> FindWithinPolygon(double[,] points, Expression<Func<TEntity, bool>> filter)
+        public async Task<IEnumerable<TEntity>> FindWithinPolygon(double[,] points, Expression<Func<TEntity, bool>> filter)
         {
             var builder = Builders<TEntity>.Filter;
             var filters = builder.And(builder.Where(filter), builder.GeoWithinPolygon(t => t.Position, points));
 
-            return _entities.GetCollection<TEntity>(_entityName).Find(filters).ToList();
+            return await _entities.GetCollection<TEntity>(_entityName).Find(filters).ToListAsync();
         }
     }
 }

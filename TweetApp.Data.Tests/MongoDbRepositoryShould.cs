@@ -22,7 +22,7 @@ namespace TweetApp.Data.Tests
         }
 
         [Fact]
-        public void Get_NewEntity_True()
+        public async void Get_NewEntity_True()
         {
             var mongoDbRepository = new MongoDbRepository<Tweet>(_connectionString, _databaseName, _collectionName);
 
@@ -31,15 +31,15 @@ namespace TweetApp.Data.Tests
                 Content = "This is a tweet"
             };
 
-            _database.GetCollection<Tweet>(_collectionName).InsertOne(tweet);
+            await _database.GetCollection<Tweet>(_collectionName).InsertOneAsync(tweet);
 
-            var result = mongoDbRepository.Get(tweet.Id);
+            var result = await mongoDbRepository.Get(tweet.Id);
 
             Assert.True(result != null ? result.Id == tweet.Id : false);
         }
 
         [Fact]
-        public void Remove_NewEntity_True()
+        public async void Remove_NewEntity_True()
         {
             var mongoDbRepository = new MongoDbRepository<Tweet>(_connectionString, _databaseName, _collectionName);
 
@@ -48,17 +48,17 @@ namespace TweetApp.Data.Tests
                 Content = "This is a testweet"
             };
 
-            _database.GetCollection<Tweet>(_collectionName).InsertOne(tweet);
+            await _database.GetCollection<Tweet>(_collectionName).InsertOneAsync(tweet);
 
             mongoDbRepository.Remove(tweet.Id);
 
-            var result = _database.GetCollection<Tweet>(_collectionName).Find(x => x.Id == tweet.Id).SingleOrDefault();
+            var result = await _database.GetCollection<Tweet>(_collectionName).Find(x => x.Id == tweet.Id).SingleOrDefaultAsync();
 
             Assert.True(result == null ? true : false);
         }
 
         [Fact]
-        public void Add_NewEntity_True()
+        public async void Add_NewEntity_True()
         {
             var mongoDbRepository = new MongoDbRepository<Tweet>(_connectionString, _databaseName, _collectionName);
 
@@ -69,13 +69,13 @@ namespace TweetApp.Data.Tests
 
             mongoDbRepository.Add(tweet);
 
-            var result = _database.GetCollection<Tweet>(_collectionName).Find(x => x.Id == tweet.Id).SingleOrDefault();
+            var result = await _database.GetCollection<Tweet>(_collectionName).Find(x => x.Id == tweet.Id).SingleOrDefaultAsync();
 
             Assert.True(result != null ? result.Id == tweet.Id : false);
         }
 
         [Fact]
-        public void GetRecentlyAdded_NewEntites_True()
+        public async void GetRecentlyAdded_NewEntites_True()
         {
             var mongoDbRepository = new MongoDbRepository<Tweet>(_connectionString, _databaseName, _collectionName);
 
@@ -90,10 +90,10 @@ namespace TweetApp.Data.Tests
                 }
             };
 
-            _database.GetCollection<Tweet>(_collectionName).InsertMany(tweets);
-            var all = _database.GetCollection<Tweet>(_collectionName).Find(FilterDefinition<Tweet>.Empty).ToList();
+            await _database.GetCollection<Tweet>(_collectionName).InsertManyAsync(tweets);
+            var all = await _database.GetCollection<Tweet>(_collectionName).Find(FilterDefinition<Tweet>.Empty).ToListAsync();
 
-            var result = mongoDbRepository.Get();
+            var result = await mongoDbRepository.Get();
 
             Assert.Equal<RootEntity>(all, result, new RootEntityComparer());
         }

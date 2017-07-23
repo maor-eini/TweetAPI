@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using TweetApp.Data.Repositories.Interfaces;
 using TweetApp.Domain.Entities;
 using TweetApp.Services.Services.Interfaces;
@@ -20,9 +21,9 @@ namespace TweetApp.Services.Services
             _repository = repository;
         }
 
-        public void Add(Tweet tweet)
+        public async Task Add(Tweet tweet)
         {
-            _repository.Add(tweet);
+            await _repository.Add(tweet);
 
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 // Keep in cache for the time specified and reset time if accessed.
@@ -31,18 +32,18 @@ namespace TweetApp.Services.Services
             _cache.Set($"{typeof(Tweet)}_{tweet.Id}", tweet, cacheEntryOptions);
         }
 
-        public IEnumerable<Tweet> GetTweetsWithinCenterSphere(double x, double y, double radius)
+        public async Task<IEnumerable<Tweet>> GetTweetsWithinCenterSphere(double x, double y, double radius)
         {
             IEnumerable<Tweet> result = null; 
 
             int cacheEntry = $"{x}_{y}_{radius}".GetHashCode();
             if (_cache.TryGetValue(cacheEntry, out IEnumerable<string> idList))
             {
-                result = _repository.Find(t => idList.Contains(t.Id));
+                result = await _repository.Find(t => idList.Contains(t.Id));
             }
             else
             {
-                result = _repository.FindWithinCenterSphere(x, y, radius);
+                result = await _repository.FindWithinCenterSphere(x, y, radius);
                 if (result != null && result.Count() > 0)
                 {
                     _cache.Set(cacheEntry, result.Select(t => t.Id));
@@ -51,7 +52,7 @@ namespace TweetApp.Services.Services
             return result;  
         }
 
-        public IEnumerable<Tweet> GetTweetsWithinPolygon(double[,] points)
+        public async Task<IEnumerable<Tweet>> GetTweetsWithinPolygon(double[,] points)
         {
             IEnumerable<Tweet> result = null;
 
@@ -69,11 +70,11 @@ namespace TweetApp.Services.Services
 
             if (_cache.TryGetValue(cacheEntry, out IEnumerable<string> idList))
             {
-                result = _repository.Find(t => idList.Contains(t.Id));
+                result = await _repository.Find(t => idList.Contains(t.Id));
             }
             else
             {
-                result = _repository.FindWithinPolygon(points);
+                result = await _repository.FindWithinPolygon(points);
                 if (result != null && result.Count() > 0)
                 {
                     _cache.Set(cacheEntry, result.Select(t => t.Id));
@@ -82,23 +83,23 @@ namespace TweetApp.Services.Services
             return result;
         }
 
-        public Tweet Get(string id)
+        public async Task<Tweet> Get(string id)
         {
             if (_cache.TryGetValue(id, out Tweet tweet))
             {
                 return tweet;
             }
-            return _repository.Get(id);
+            return await _repository.Get(id);
         }
 
-        public IEnumerable<Tweet> GetRecentlyAddedTweets()
+        public async Task<IEnumerable<Tweet>> GetRecentlyAddedTweets()
         {
-            return _repository.Get();
+            return await _repository.Get();
         }
 
-        public void Remove(string id)
+        public async Task Remove(string id)
         {
-            _repository.Remove(id);
+            await _repository.Remove(id);
         }
     }
 }
