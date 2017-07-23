@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TweetAPI.Domain.Entities;
+using TweetApp.Domain.Entities;
 
-namespace TweetAPI.Data.Tests.Model
+namespace TweetApp.Data.Tests.Model
 {
     public class RootEntityComparer : IEqualityComparer<RootEntity>
     {
         public bool Equals(RootEntity x, RootEntity y)
         {
-            return x.Id == y.Id;
+            return x.Id == y.Id && x.GetType() == y.GetType();
         }
 
         public int GetHashCode(RootEntity obj)
         {
-            return obj.Id.GetHashCode();
+            return $"{obj.GetType()}_{obj.Id}".GetHashCode();
         }
     }
 }

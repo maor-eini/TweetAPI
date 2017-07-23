@@ -5,11 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.2" />
     <PackageReference Include="MongoDB.Driver" Version="2.4.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TweetAPI.Domain\TweetAPI.Domain.csproj" />
+    <ProjectReference Include="..\TweetApp.Domain\TweetApp.Domain.csproj" />
   </ItemGroup>
 
 </Project>

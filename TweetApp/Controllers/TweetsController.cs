@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TweetAPI.Data.Repositories.Interfaces;
-using TweetAPI.Domain.Entities;
+using TweetApp.Data.Repositories.Interfaces;
+using TweetApp.Domain.Entities;
+using TweetApp.Services.Services.Interfaces;
 
-namespace TweetAPI.Controllers
+namespace TweetApp.Controllers
 {
     [Route("api/[controller]")]
     public class TweetsController : Controller
     {
-        private ITweetRepository _tweetRepository;
+        private ITweetService _tweetService;
 
-        public TweetsController(ITweetRepository tweetRepository)
+        public TweetsController(ITweetService tweetService)
         {
-            _tweetRepository = tweetRepository;
+            _tweetService = tweetService;
         }
         // GET api/tweet
         [HttpGet]
         public IActionResult Get()
         {
-            var tweets = _tweetRepository.GetAll();
+            var tweets = _tweetService.GetRecentlyAddedTweets();
 
             if (tweets == null)
             {
@@ -37,7 +38,7 @@ namespace TweetAPI.Controllers
         {
             if (String.IsNullOrEmpty(id)) return BadRequest();
 
-            var tweet = _tweetRepository.Get(id);
+            var tweet = _tweetService.Get(id);
 
             if (tweet == null)
             {
@@ -56,7 +57,7 @@ namespace TweetAPI.Controllers
                 BadRequest();
             }
 
-            _tweetRepository.Add(tweet);
+            _tweetService.Add(tweet);
 
             return CreatedAtRoute("Get", new { id = tweet.Id }, tweet);
         }
@@ -74,18 +75,18 @@ namespace TweetAPI.Controllers
         {
             if (String.IsNullOrEmpty(id)) return BadRequest();
 
-            _tweetRepository.Remove(id);
+            _tweetService.Remove(id);
 
             return Ok();
         }
 
         // GET api/tweet?x={double}&y={double}&radius={double}
-        [HttpGet]
-        public IActionResult GetTweetsWithinCenterSphere(double x, double y, double radius)
+        [HttpGet("WithinCenterSphere")]
+        public IActionResult GetTweetsWithinCenterSphere([FromQuery]double x, [FromQuery]double y, [FromQuery]double radius)
         {
             if (radius <= 0) return BadRequest();
 
-            var tweets = _tweetRepository.GetTweetsWithinCenterSphere(x, y, radius);
+            var tweets = _tweetService.GetTweetsWithinCenterSphere(x, y, radius);
 
             if (tweets == null)
             {
@@ -96,19 +97,19 @@ namespace TweetAPI.Controllers
         }
 
         // POST api/tweet
-        [HttpPost]
+        [HttpPost("WithinPolygon")]
         public IActionResult GetTweetsWithinPolygon([FromBody]double[,] points)
         {
             if (points == null || points.Length < 3 ) return BadRequest();
 
             //Validate that the first and last elements are equals
             if (points[0, 0] != points[points.Length-1, 0] && 
-                points[0, 1] != points[points.Length - 1, 1])
+                points[0, 1] != points[points.Length-1, 1])
             {
                 return BadRequest();
             }
 
-            var tweets = _tweetRepository.GetTweetsWithinPolygon(points);
+            var tweets = _tweetService.GetTweetsWithinPolygon(points);
 
             if (tweets == null)
             {

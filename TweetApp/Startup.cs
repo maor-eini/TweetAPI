@@ -7,10 +7,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TweetAPI.Data.Repositories.Interfaces;
-using TweetAPI.Data.Repositories;
+using TweetApp.Data.Repositories.Interfaces;
+using TweetApp.Data.Repositories;
+using Swashbuckle.AspNetCore.Swagger;
+using TweetApp.Services.Services.Interfaces;
+using TweetApp.Services.Services;
+using TweetApp.Data.Repositories.MongoDB;
+using TweetApp.Domain.Entities;
 
-namespace TweetAPI
+namespace TweetApp
 {
     public class Startup
     {
@@ -29,9 +34,17 @@ namespace TweetAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ITweetRepository, TweetRepository>();
+            services.AddScoped<ITweetService, TweetService>();
+            services.AddScoped<IGeospatialRepository<Tweet>, GeospatialMongoDbRepository<Tweet>>();
+            // Add In-Memory Cache Service
+            services.AddMemoryCache();
             // Add framework services.
             services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "TweetAPI", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,7 +53,19 @@ namespace TweetAPI
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseDeveloperExceptionPage();
+
             app.UseMvc();
+
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "/api-docs/{documentName}/swagger.json";
+            });
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/api-docs/v1/swagger.json", "TweetAPI v1");
+            });
         }
     }
 }

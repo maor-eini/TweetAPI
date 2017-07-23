@@ -6,13 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.4.4" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TweetAPI.Data\TweetAPI.Data.csproj" />
-    <ProjectReference Include="..\TweetAPI.Domain\TweetAPI.Domain.csproj" />
+    <ProjectReference Include="..\TweetApp.Data\TweetApp.Data.csproj" />
+    <ProjectReference Include="..\TweetApp.Domain\TweetApp.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

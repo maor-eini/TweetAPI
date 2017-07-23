@@ -1,12 +1,11 @@
 using MongoDB.Driver;
-using System;
 using System.Collections.Generic;
-using TweetAPI.Data.Repositories;
-using TweetAPI.Data.Tests.Model;
-using TweetAPI.Domain.Entities;
+using TweetApp.Data.Repositories.MongoDB;
+using TweetApp.Data.Tests.Model;
+using TweetApp.Domain.Entities;
 using Xunit;
 
-namespace TweetAPI.Data.Tests
+namespace TweetApp.Data.Tests
 {
     public class MongoDbRepositoryShould
     {
@@ -76,7 +75,7 @@ namespace TweetAPI.Data.Tests
         }
 
         [Fact]
-        public void GetAll_NewEntites_True()
+        public void GetRecentlyAdded_NewEntites_True()
         {
             var mongoDbRepository = new MongoDbRepository<Tweet>(_connectionString, _databaseName, _collectionName);
 
@@ -94,7 +93,7 @@ namespace TweetAPI.Data.Tests
             _database.GetCollection<Tweet>(_collectionName).InsertMany(tweets);
             var all = _database.GetCollection<Tweet>(_collectionName).Find(FilterDefinition<Tweet>.Empty).ToList();
 
-            var result = mongoDbRepository.GetAll();
+            var result = mongoDbRepository.Get();
 
             Assert.Equal<RootEntity>(all, result, new RootEntityComparer());
         }
